@@ -147,6 +147,7 @@
   /* ---------- críticas ---------- */
   function renderCriticas() {
     var container = el("lista-criticas");
+    container.replaceChildren();
     CRITICAS.forEach(function (c) {
       var artigo = document.createElement("article");
       artigo.className = "critica" + (c === criticaAtiva ? " selecionada" : "");
