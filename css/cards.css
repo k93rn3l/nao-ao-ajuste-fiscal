@@ -1,57 +1,89 @@
-/* ============ Cartões "O que o Senado aprovou até agora?" ============ */
+/* ============ Medidas: animação + detalhes ============ */
 
-.lista-aprovado { display: flex; flex-direction: column; gap: 12px; }
+.lista-aprovado { display: flex; flex-direction: column; gap: 22px; }
 
-.card-aprovado {
+.medida {
   background: var(--card);
   border: 1px solid var(--borda);
   border-radius: var(--raio);
   overflow: hidden;
 }
 
-.card-aprovado summary {
+.medida-cabecalho {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 20px;
+  padding: 16px 20px 12px;
+}
+.medida-cabecalho h3 { margin: 0; font-size: 1.2rem; }
+.card-icone { font-size: 1.35rem; }
+
+/* palco da animação */
+.anim-mount { padding: 0 14px; }
+.anim-wrap-inner { border: 1px solid var(--borda); border-radius: 12px; overflow: hidden; }
+.anim-svg { display: block; width: 100%; height: auto; background: var(--fundo); }
+
+.anim-controles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #0e1626;
+  border-top: 1px solid var(--borda);
+}
+.anim-controles button {
   cursor: pointer;
-  font-weight: 800;
-  font-size: 1.02rem;
-  list-style: none;
-  position: relative;
-  padding-right: 48px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--texto);
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  min-width: 40px;
 }
-.card-aprovado summary::-webkit-details-marker { display: none; }
-.card-aprovado summary::after {
-  content: "+";
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.4rem;
-  color: var(--vermelho);
-  font-weight: 800;
-}
-.card-aprovado[open] summary::after { content: "−"; }
-.card-aprovado[open] summary { border-bottom: 1px solid var(--borda); }
-
-.card-icone { font-size: 1.3rem; }
-
-.card-aprovado h4 {
-  margin: 18px 20px 4px;
+.anim-controles button:hover { background: rgba(255, 255, 255, 0.16); }
+.anim-controles input[type="range"] { flex: 1; accent-color: var(--vermelho); cursor: pointer; }
+.anim-tempo {
+  font-variant-numeric: tabular-nums;
+  color: var(--texto-meio);
   font-size: 0.82rem;
+  min-width: 78px;
+  text-align: right;
+}
+
+/* detalhes recolhidos */
+.detalhes-medida { border-top: 1px solid var(--borda); }
+.detalhes-medida summary {
+  padding: 13px 20px;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--amarelo);
+  font-size: 0.95rem;
+  list-style: none;
+}
+.detalhes-medida summary::-webkit-details-marker { display: none; }
+.detalhes-medida summary::before { content: "▸ "; }
+.detalhes-medida[open] summary::before { content: "▾ "; }
+
+.detalhes-medida h4 {
+  margin: 14px 20px 4px;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.8px;
   color: var(--amarelo);
 }
-.card-aprovado p { margin: 0 20px 4px; color: var(--texto-meio); font-size: 0.94rem; }
-.card-aprovado p:last-of-type { margin-bottom: 14px; }
+.detalhes-medida p { margin: 0 20px 4px; color: var(--texto-meio); font-size: 0.93rem; }
+.detalhes-medida p:last-of-type { margin-bottom: 14px; }
 
 .card-fonte { font-size: 0.82rem !important; }
 .card-fonte a { color: var(--texto-meio); text-decoration: underline; }
 
 /* responsivo */
 @media (max-width: 640px) {
-  .card-aprovado summary { padding: 14px 44px 14px 16px; font-size: 0.95rem; }
-  .card-aprovado p, .card-aprovado h4 { margin-left: 16px; margin-right: 16px; }
+  .anim-mount { padding: 0 8px; }
+  .medida-cabecalho { padding: 12px 14px 8px; }
+  .medida-cabecalho h3 { font-size: 1.05rem; }
+  .detalhes-medida summary { padding: 12px 14px; }
+  .detalhes-medida p, .detalhes-medida h4 { margin-left: 14px; margin-right: 14px; }
 }
