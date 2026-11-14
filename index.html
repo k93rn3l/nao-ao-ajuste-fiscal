@@ -6,7 +6,7 @@
   <title>Não ao Ajuste Fiscal: cobre seus parlamentares por e-mail</title>
   <meta name="description" content="Entenda o PLP 299/2026 (pacote de ajuste fiscal), escolha uma crítica legítima e envie um e-mail de cobrança para senadores e deputados em poucos cliques." />
   <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/simulador.css" />
+  <link rel="stylesheet" href="css/cards.css" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E✊%3C/text%3E%3C/svg%3E" />
 </head>
 <body>
@@ -15,7 +15,6 @@
     <a class="marca" href="#inicio">NÃO AO <span>AJUSTE FISCAL</span></a>
     <nav aria-label="Navegação principal">
       <a href="#entenda">Entenda</a>
-      <a href="#simulador">Simule o ajuste</a>
       <a href="#criticas">Críticas do povo</a>
       <a class="destaque-nav" href="#cobrar">Cobrar agora ✊</a>
     </nav>
@@ -129,35 +128,6 @@
       <div id="lista-aprovado" class="lista-aprovado"></div>
     </section>
 
-    <!-- ============ SIMULADOR ============ -->
-    <section id="simulador" class="secao">
-      <h2>Simule você mesmo</h2>
-      <p class="secao-sub">
-        Mude os números e descubra como as regras fiscais podem alterar o orçamento.
-        Os resultados são exemplos educativos, não previsões oficiais. Onde existem dados
-        reais (como o Orçamento de 2027), eles estão identificados.
-      </p>
-      <div id="lista-simuladores"></div>
-      <div class="transparencia">
-        <p>
-          <strong>Sobre estas simulações:</strong> este simulador tem finalidade educativa.
-          Os valores apresentados são hipotéticos, salvo quando expressamente identificados
-          como dados oficiais. Os resultados demonstram o funcionamento simplificado das
-          regras, mas não constituem previsão orçamentária. A proposta legislativa pode ser
-          modificada durante a tramitação.
-        </p>
-        <p>
-          Versão do texto descrita: <strong id="sim-versao">…</strong>.
-          Última revisão das informações: <strong id="sim-revisao">…</strong>.
-          Texto-base consultado: <a id="sim-link-texto" href="#" target="_blank" rel="noopener">…</a>.
-        </p>
-        <p class="aviso-desatualizado" id="sim-aviso-desatualizado" hidden>
-          ⚠️ Atenção: a tramitação avançou e esta página ainda descreve a versão anterior do
-          texto. Estamos trabalhando na atualização.
-        </p>
-      </div>
-    </section>
-
     <!-- ============ CRÍTICAS ============ -->
     <section id="criticas" class="secao secao-escura">
       <h2>Críticas do povo</h2>
@@ -265,7 +235,7 @@
 
   <script src="js/data.js"></script>
   <script src="js/medidas.js"></script>
-  <script src="js/simulador.js"></script>
+  <script src="js/cards.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

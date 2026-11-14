@@ -1,0 +1,57 @@
+/* ============ Cartões "O que o Senado aprovou até agora?" ============ */
+
+.lista-aprovado { display: flex; flex-direction: column; gap: 12px; }
+
+.card-aprovado {
+  background: var(--card);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  overflow: hidden;
+}
+
+.card-aprovado summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 1.02rem;
+  list-style: none;
+  position: relative;
+  padding-right: 48px;
+}
+.card-aprovado summary::-webkit-details-marker { display: none; }
+.card-aprovado summary::after {
+  content: "+";
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  color: var(--vermelho);
+  font-weight: 800;
+}
+.card-aprovado[open] summary::after { content: "−"; }
+.card-aprovado[open] summary { border-bottom: 1px solid var(--borda); }
+
+.card-icone { font-size: 1.3rem; }
+
+.card-aprovado h4 {
+  margin: 18px 20px 4px;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--amarelo);
+}
+.card-aprovado p { margin: 0 20px 4px; color: var(--texto-meio); font-size: 0.94rem; }
+.card-aprovado p:last-of-type { margin-bottom: 14px; }
+
+.card-fonte { font-size: 0.82rem !important; }
+.card-fonte a { color: var(--texto-meio); text-decoration: underline; }
+
+/* responsivo */
+@media (max-width: 640px) {
+  .card-aprovado summary { padding: 14px 44px 14px 16px; font-size: 0.95rem; }
+  .card-aprovado p, .card-aprovado h4 { margin-left: 16px; margin-right: 16px; }
+}
