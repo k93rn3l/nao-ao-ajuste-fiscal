@@ -324,6 +324,15 @@ textarea { resize: vertical; }
   cursor: pointer;
 }
 .chip.ativo { background: var(--vermelho); border-color: var(--vermelho); color: #fff; }
+.chip.cheio {
+  border-color: var(--verde);
+  color: var(--verde);
+}
+.chip.ativo.cheio {
+  background: var(--verde);
+  border-color: var(--verde);
+  color: #0c0e12;
+}
 
 .acoes-rapidas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
 

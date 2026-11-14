@@ -147,7 +147,7 @@
         </h3>
 
         <div class="filtros">
-          <div class="chip-grupo" role="group" aria-label="Filtrar por casa">
+          <div class="chip-grupo" role="group" aria-label="Filtrar e selecionar por casa">
             <button class="chip ativo" data-casa="todos">Todos</button>
             <button class="chip" data-casa="senado">Senado</button>
             <button class="chip" data-casa="camara">Câmara</button>
@@ -161,10 +161,12 @@
             <select id="uf"><option value="">Todas</option></select>
           </label>
         </div>
+        <p class="dica">
+          Clique em <strong>Senado</strong> ou <strong>Câmara</strong> para selecionar a casa
+          inteira de uma vez; clique de novo para desmarcar todos e escolher poucos.
+        </p>
 
         <div class="acoes-rapidas">
-          <button class="btn btn-mini" id="sel-senado">Selecionar todo o Senado (81)</button>
-          <button class="btn btn-mini" id="sel-camara">Selecionar toda a Câmara (513)</button>
           <button class="btn btn-mini" id="sel-uf">Selecionar meu estado (após escolher UF)</button>
           <button class="btn btn-mini btn-fantasma" id="limpar">Limpar seleção</button>
         </div>

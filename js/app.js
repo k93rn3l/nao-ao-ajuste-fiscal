@@ -294,6 +294,34 @@
     var n = Object.keys(selecionados).length;
     el("contador").textContent = n === 1 ? "1 selecionado" : n + " selecionados";
     el("aviso-limite").hidden = n <= 20;
+    atualizarChips();
+    atualizarBotaoUf();
+  }
+
+  function casaCompleta(casa) {
+    var daCasa = todos.filter(function (p) { return p.casa === casa; });
+    return daCasa.length > 0 && daCasa.every(function (p) { return !!selecionados[p.id]; });
+  }
+
+  function atualizarChips() {
+    document.querySelectorAll(".chip[data-casa]").forEach(function (chip) {
+      var casa = chip.dataset.casa;
+      if (casa === "todos") return;
+      chip.classList.toggle("cheio", casaCompleta(casa));
+    });
+  }
+
+  function atualizarBotaoUf() {
+    var uf = el("uf").value;
+    var btn = el("sel-uf");
+    if (!uf) {
+      btn.textContent = "Selecionar meu estado (após escolher UF)";
+      return;
+    }
+    var doEstado = todos.filter(function (p) { return p.uf === uf; });
+    var completos = doEstado.length > 0 && doEstado.every(function (p) { return !!selecionados[p.id]; });
+    btn.textContent = (completos ? "Desmarcar" : "Selecionar") + " meu estado: " + uf +
+      " (" + doEstado.length + ")";
   }
 
   /* ---------- e-mail ---------- */
@@ -359,27 +387,42 @@
 
   /* ---------- eventos ---------- */
   function ligarEventos() {
-    // chips de casa
+    // chips de casa: filtram a lista; Senado e Câmara também alternam a seleção
+    // da casa inteira (clicar seleciona todos, clicar de novo desmarca todos)
     document.querySelectorAll(".chip[data-casa]").forEach(function (chip) {
       chip.addEventListener("click", function () {
+        var casa = chip.dataset.casa;
         document.querySelectorAll(".chip[data-casa]").forEach(function (c) { c.classList.remove("ativo"); });
         chip.classList.add("ativo");
-        filtroCasa = chip.dataset.casa;
+        filtroCasa = casa;
         renderLista();
+
+        if (casa !== "senado" && casa !== "camara") {
+          atualizarContador();
+          return; // "Todos" é só filtro
+        }
+
+        var daCasa = todos.filter(function (p) { return p.casa === casa; });
+        var nomeCasa = casa === "senado" ? "Senado" : "Câmara";
+        if (casaCompleta(casa)) {
+          daCasa.forEach(function (p) { delete selecionados[p.id]; });
+          toast(nomeCasa + " desmarcado: " + daCasa.length + " parlamentares removidos.");
+        } else {
+          daCasa.forEach(function (p) { selecionados[p.id] = true; });
+          toast(nomeCasa + " inteiro selecionado (" + daCasa.length + "). Clique de novo para desmarcar.");
+        }
+        salvar();
+        renderLista();
+        atualizarContador();
       });
     });
 
     el("busca").addEventListener("input", renderLista);
-    el("uf").addEventListener("change", renderLista);
+    el("uf").addEventListener("change", function () {
+      renderLista();
+      atualizarBotaoUf();
+    });
 
-    el("sel-senado").addEventListener("click", function () {
-      selecionarVarios(todos.filter(function (p) { return p.casa === "senado"; }));
-      toast("Todos os senadores selecionados (81).");
-    });
-    el("sel-camara").addEventListener("click", function () {
-      selecionarVarios(todos.filter(function (p) { return p.casa === "camara"; }));
-      toast("Todos os deputados selecionados (513).");
-    });
     el("sel-uf").addEventListener("click", function () {
       var uf = el("uf").value;
       if (!uf) {
@@ -387,8 +430,16 @@
         return;
       }
       var doEstado = todos.filter(function (p) { return p.uf === uf; });
-      selecionarVarios(doEstado);
-      toast(doEstado.length + " parlamentares de " + uf + " selecionados.");
+      if (doEstado.every(function (p) { return !!selecionados[p.id]; })) {
+        doEstado.forEach(function (p) { delete selecionados[p.id]; });
+        salvar();
+        renderLista();
+        atualizarContador();
+        toast("Parlamentares de " + uf + " desmarcados (" + doEstado.length + ").");
+      } else {
+        selecionarVarios(doEstado);
+        toast(doEstado.length + " parlamentares de " + uf + " selecionados.");
+      }
     });
     el("limpar").addEventListener("click", function () {
       selecionados = {};
@@ -415,10 +466,6 @@
       el("data-geracao").textContent = window.DADOS.geradoEm
         ? new Date(window.DADOS.geradoEm + "T12:00:00").toLocaleDateString("pt-BR")
         : "data não disponível";
-      el("sel-senado").textContent = "Selecionar todo o Senado (" +
-        (window.DADOS.senado || []).length + ")";
-      el("sel-camara").textContent = "Selecionar toda a Câmara (" +
-        (window.DADOS.camara || []).length + ")";
       ufSelectPreencher();
     aplicarCritica(criticaAtiva);
     renderCriticas();
