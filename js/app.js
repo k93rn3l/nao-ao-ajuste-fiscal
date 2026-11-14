@@ -6,17 +6,17 @@
   var CRITICAS = [
     {
       id: "pisos",
-      titulo: "Pisos de saúde e educação não são negociáveis",
-      assunto: "Não ao PLP 299/2026: preserve os pisos da saúde e da educação",
+      titulo: "Piso da saúde e orçamento da educação não são negociáveis",
+      assunto: "Não ao PLP 299/2026: preserve o piso da saúde e o orçamento da educação",
       texto:
         "Excelência,\n\n" +
-        "Venho, como eleitor(a), manifestar minha oposição à mudança no cálculo dos pisos " +
-        "constitucionais de saúde e educação prevista no PLP 299/2026. Enquanto filas nos " +
-        "hospitais e escolas sem estrutura seguem na rotina do povo brasileiro, o Congresso " +
-        "discute reduzir o mínimo obrigatório investido nessas áreas.\n\n" +
-        "Saúde e educação são direitos constitucionais e não podem ser tratadas como variáveis " +
-        "de ajuste. Exijo que Vossa Excelência vote contra qualquer dispositivo que reduza ou " +
-        "flexibilize os pisos da saúde e da educação.\n\n" +
+        "Venho, como eleitor(a), manifestar minha oposição às medidas do PLP 299/2026 que excluem " +
+        "receitas de petróleo da base de cálculo do piso da saúde, reduzindo a obrigação mínima " +
+        "da União com o SUS em R$ 6,8 bilhões no Orçamento de 2027, e que facilitam contingenciamentos " +
+        "que recaem sobre universidades, bolsas e serviços públicos de educação.\n\n" +
+        "Saúde e educação são direitos constitucionais e não podem ser tratados como variáveis de " +
+        "ajuste. Exijo que Vossa Excelência vote contra qualquer dispositivo que reduza o piso da " +
+        "saúde ou aperte o orçamento da educação.\n\n" +
         "Estarei acompanhando seu voto.\n\n" +
         "Atenciosamente,\n[seu nome], [cidade/UF]"
     },
@@ -26,27 +26,27 @@
       assunto: "PLP 299/2026: o ajuste não pode recair sobre quem menos pode",
       texto:
         "Excelência,\n\n" +
-        "O pacote de ajuste fiscal em tramitação (PLP 299/2026) propõe bloqueios de gastos e " +
-        "cortes que atingem serviços públicos essenciais, enquanto a tributação de lucros e " +
-        "dividendos e de salários altíssimos segue sendo tratada como se fosse opcional.\n\n" +
+        "O pacote de ajuste fiscal em tramitação (PLP 299/2026) amplia bloqueios de orçamento e " +
+        "restringe compensações que atingem serviços e políticas públicas, enquanto corta " +
+        "benefícios tributários e não toca nos rendimentos mais altos do país.\n\n" +
         "Não é justo que trabalhadores, estudantes, professores e quem depende do SUS paguem " +
-        "a conta de um ajuste que poupa as maiores rendas do país. Exijo que Vossa Excelência " +
-        "defenda que quem mais ganha contribua primeiro, antes de qualquer corte que afete o povo.\n\n" +
+        "a conta de um ajuste que poupa as maiores rendas. Exijo que Vossa Excelência defenda " +
+        "que quem mais ganha contribua primeiro, antes de qualquer medida que aperte o povo.\n\n" +
         "Vote contra o pacote na forma atual.\n\n" +
         "Atenciosamente,\n[seu nome], [cidade/UF]"
     },
     {
       id: "bloqueios",
-      titulo: "Direitos não podem ser contingenciados",
-      assunto: "Não ao PLP 299/2026: direitos não podem ser contingenciados",
+      titulo: "Direitos e serviços não podem ser contingenciados",
+      assunto: "Não ao PLP 299/2026: serviços essenciais não podem ser bloqueados",
       texto:
         "Excelência,\n\n" +
-        "A redução do limite de crescimento das despesas e a ampliação do poder de bloqueio de " +
-        "gastos obrigatórios previstas no PLP 299/2026 significam, na prática, menos vagas em " +
-        "escolas e hospitais, menos medicamentos, menos investimento público e menos atendimento " +
-        "a quem mais precisa.\n\n" +
-        "Contingenciar direitos não é ajuste: é retrocesso. Exijo que Vossa Excelência rejeite a " +
-        "ampliação dos bloqueios e qualquer medida que esvazie serviços públicos essenciais.\n\n" +
+        "A redução do teto de crescimento das despesas e o novo contingenciamento preventivo " +
+        "previstos no PLP 299/2026 significam, na prática, menos investimento público: quem " +
+        "sofre o bloqueio são as despesas discricionárias, como obras, custeio, universidades, " +
+        "bolsas e atendimento a quem mais precisa.\n\n" +
+        "Contingenciar serviços essenciais não é ajuste: é retrocesso. Exijo que Vossa Excelência " +
+        "rejeite a ampliação dos bloqueios e qualquer medida que esvazie serviços públicos.\n\n" +
         "Atenciosamente,\n[seu nome], [cidade/UF]"
     },
     {
@@ -57,7 +57,7 @@
         "Excelência,\n\n" +
         "Como seu eleitor(a), exijo um posicionamento público e claro sobre o PLP 299/2026, o " +
         "chamado ajuste fiscal: como Vossa Excelência votará o texto e os destaques, especialmente " +
-        "os que tratam dos pisos de saúde e educação e da tributação de altas rendas?\n\n" +
+        "os que tratam do piso da saúde, dos bloqueios de orçamento e da compensação tributária?\n\n" +
         "O povo tem o direito de saber, antes da votação, quem representa seus interesses. Meu " +
         "acompanhamento e meu voto nas próximas eleições refletirão sua resposta e sua atuação.\n\n" +
         "Responda a este e-mail e assuma publicamente sua posição.\n\n" +
@@ -69,10 +69,10 @@
       assunto: "Rejeito o ajuste fiscal: não em meu nome",
       texto:
         "Excelência,\n\n" +
-        "Manifesto minha indignação com o PLP 299/2026. Um pacote que flexibiliza os pisos de " +
-        "saúde e educação, amplia bloqueios de gastos essenciais e ainda reluta em tributar de " +
-        "fato lucros, dividendos e salários altíssimos não representa o povo que elegeu seus " +
-        "representantes.\n\n" +
+        "Manifesto minha indignação com o PLP 299/2026. Um pacote que reduz a base do piso da " +
+        "saúde, facilita o bloqueio de orçamento essencial e concentra o esforço em cortar " +
+        "benefícios e compensações, sem tocar nos rendimentos mais altos do país, não representa " +
+        "o povo que elegeu seus representantes.\n\n" +
         "O Brasil precisa de justiça fiscal, não de ajuste sobre os mais pobres. Rejeito esse " +
         "pacote em nome da minha família e da minha comunidade, e cobro coragem de Vossa " +
         "Excelência para votar com o povo.\n\n" +

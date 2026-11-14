@@ -1,0 +1,218 @@
+/* ============ Módulo: entenda e simule o ajuste fiscal ============ */
+
+/* ---------- cards "O que o Senado aprovou até agora?" ---------- */
+.lista-aprovado { display: flex; flex-direction: column; gap: 12px; }
+
+.card-aprovado {
+  background: var(--card);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  overflow: hidden;
+}
+
+.card-aprovado summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 1.02rem;
+  list-style: none;
+  position: relative;
+  padding-right: 48px;
+}
+.card-aprovado summary::-webkit-details-marker { display: none; }
+.card-aprovado summary::after {
+  content: "+";
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  color: var(--vermelho);
+  font-weight: 800;
+}
+.card-aprovado[open] summary::after { content: "−"; }
+.card-aprovado[open] summary { border-bottom: 1px solid var(--borda); }
+
+.card-icone { font-size: 1.3rem; }
+
+.card-aprovado h4 {
+  margin: 18px 20px 4px;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--amarelo);
+}
+.card-aprovado p { margin: 0 20px 4px; color: var(--texto-meio); font-size: 0.94rem; }
+.card-aprovado p:last-of-type { margin-bottom: 14px; }
+
+.btn-impacto {
+  display: inline-block;
+  margin: 6px 20px 16px;
+  background: rgba(229, 72, 77, 0.15);
+  border-color: var(--vermelho);
+  color: var(--texto);
+}
+
+.card-fonte { font-size: 0.82rem !important; }
+.card-fonte a { color: var(--texto-meio); text-decoration: underline; }
+
+/* ---------- simuladores ---------- */
+.sim {
+  background: var(--card);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.sim-pergunta { margin: 0 0 8px; font-size: 1.25rem; }
+.sim-explica { margin: 0 0 18px; color: var(--texto-meio); font-size: 0.95rem; }
+
+.sim-controles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.controle-rotulo { font-size: 0.85rem; font-weight: 600; color: var(--texto-meio); }
+.controle-entradas { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.controle-entradas input[type="number"] { width: 110px; flex: none; }
+.controle-sufixo { color: var(--texto-meio); font-size: 0.85rem; }
+.controle-entradas input[type="range"] { flex: 1; accent-color: var(--vermelho); }
+
+.controle-toggle { display: flex; align-items: flex-end; }
+.toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.88rem; color: var(--texto); padding-bottom: 8px; }
+.toggle input { width: 20px; height: 20px; accent-color: var(--vermelho); }
+
+.sim-resultados {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.resultado {
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.resultado-rotulo { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--texto-meio); }
+.resultado-valor { font-size: 1.05rem; font-weight: 800; }
+.resultado.ok .resultado-valor { color: var(--verde); }
+.resultado.atencao .resultado-valor { color: var(--vermelho); }
+.resultado.grande .resultado-valor { color: var(--amarelo); font-size: 1.15rem; }
+
+/* barras comparativas */
+.sim-barras { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.barra-linha { display: grid; grid-template-columns: 150px 1fr 110px; align-items: center; gap: 10px; }
+.barra-rotulo { font-size: 0.82rem; color: var(--texto-meio); }
+.barra-trilho { background: var(--fundo); border: 1px solid var(--borda); border-radius: 999px; height: 18px; overflow: hidden; }
+.barra-fill { height: 100%; border-radius: 999px; transition: width 0.25s ease; }
+.barra-fill.ok { background: var(--verde); }
+.barra-fill.atencao { background: var(--vermelho); }
+.barra-valor { font-size: 0.85rem; font-weight: 700; text-align: right; }
+
+.sim-interpretacao {
+  margin: 0 0 12px;
+  padding: 12px 16px;
+  background: rgba(255, 209, 102, 0.07);
+  border-left: 3px solid var(--amarelo);
+  border-radius: 6px;
+  font-size: 0.93rem;
+  color: var(--texto);
+}
+
+.sim-aviso {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--texto-meio);
+  font-style: italic;
+}
+
+.sim-rodape { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 10px; }
+
+.sim-conta { flex: 1; min-width: 240px; font-size: 0.86rem; color: var(--texto-meio); }
+.sim-conta summary { cursor: pointer; color: var(--amarelo); font-weight: 700; }
+.sim-conta p { margin: 8px 0 0; }
+
+.sim-fonte { margin: 0; font-size: 0.8rem; color: var(--texto-meio); }
+
+/* faixa da meta (simulador 3) */
+.faixa-meta {
+  position: relative;
+  height: 54px;
+  margin: 4px 0 14px;
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.faixa-tolerancia {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  background: rgba(70, 214, 140, 0.18);
+  border-left: 2px dashed var(--verde);
+  border-right: 2px dashed var(--verde);
+}
+.faixa-centro {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--amarelo);
+}
+.faixa-resultado {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 4px;
+  background: var(--vermelho);
+  border-radius: 2px;
+}
+.faixa-legenda {
+  position: absolute;
+  left: 10px;
+  bottom: 2px;
+  font-size: 0.75rem;
+  color: var(--texto-meio);
+}
+
+/* comparador */
+.comp-linha h4 { margin: 10px 0 8px; font-size: 0.95rem; }
+
+/* transparência */
+.transparencia {
+  background: var(--fundo-2);
+  border: 1px dashed var(--borda);
+  border-radius: var(--raio);
+  padding: 20px 22px;
+  font-size: 0.9rem;
+  color: var(--texto-meio);
+}
+.transparencia strong { color: var(--texto); }
+.transparencia p { margin: 0 0 8px; }
+.transparencia p:last-child { margin-bottom: 0; }
+.aviso-desatualizado {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 209, 102, 0.12);
+  border-left: 3px solid var(--amarelo);
+  border-radius: 6px;
+  color: var(--texto);
+}
+
+/* responsivo */
+@media (max-width: 640px) {
+  .barra-linha { grid-template-columns: 1fr; gap: 4px; }
+  .barra-valor { text-align: left; }
+  .card-aprovado summary { padding: 14px 44px 14px 16px; font-size: 0.95rem; }
+  .card-aprovado p, .card-aprovado h4 { margin-left: 16px; margin-right: 16px; }
+}
