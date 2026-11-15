@@ -1,6 +1,5 @@
 /* ============ Cartões "O que o Senado aprovou até agora?" ============ */
-/* Cada medida é explicada por uma animação (js/animacoes.js); o texto
-   verificado e as fontes ficam recolhidos em "Detalhes e fonte". */
+/* Cada medida tem um vídeo narrado; texto e fontes ficam nos detalhes. */
 (function () {
   "use strict";
 
@@ -9,8 +8,6 @@
   function renderCards() {
     var pai = document.getElementById("lista-aprovado");
     if (!pai) return;
-    var comAnimacao = !!(window.ANIMACOES && window.montarAnimacao);
-
     M.cards.forEach(function (c) {
       var artigo = document.createElement("article");
       artigo.className = "medida";
@@ -27,17 +24,37 @@
       cab.appendChild(h3);
       artigo.appendChild(cab);
 
-      if (comAnimacao && window.ANIMACOES[c.id]) {
-        var palco = document.createElement("div");
-        palco.className = "anim-mount";
-        palco.id = "anim-" + c.id;
-        artigo.appendChild(palco);
-      }
+      var resumo = document.createElement("p");
+      resumo.className = "medida-resumo";
+      resumo.textContent = c.impacto;
+      artigo.appendChild(resumo);
+
+      var areaVideo = document.createElement("div");
+      areaVideo.className = "medida-video-area";
+      var video = document.createElement("video");
+      video.className = "medida-video";
+      video.controls = true;
+      video.playsInline = true;
+      video.preload = "none";
+      video.poster = "assets/videos/" + c.id + ".jpg";
+      video.setAttribute("aria-label", "Vídeo explicativo: " + c.titulo);
+      var fonteVideo = document.createElement("source");
+      fonteVideo.src = "assets/videos/" + c.id + ".mp4";
+      fonteVideo.type = "video/mp4";
+      video.appendChild(fonteVideo);
+      var legenda = document.createElement("track");
+      legenda.kind = "subtitles";
+      legenda.label = "Português";
+      legenda.srclang = "pt-BR";
+      legenda.src = "assets/videos/" + c.id + ".vtt";
+      video.appendChild(legenda);
+      areaVideo.appendChild(video);
+      artigo.appendChild(areaVideo);
 
       var detalhes = document.createElement("details");
       detalhes.className = "detalhes-medida";
       var sumario = document.createElement("summary");
-      sumario.textContent = "Detalhes, números e fonte oficial";
+      sumario.textContent = "Ler a explicação completa e a fonte oficial";
       detalhes.appendChild(sumario);
 
       var campos = [
@@ -72,13 +89,6 @@
       pai.appendChild(artigo);
     });
 
-    if (comAnimacao) {
-      M.cards.forEach(function (c) {
-        if (window.ANIMACOES[c.id]) {
-          window.montarAnimacao("anim-" + c.id, window.ANIMACOES[c.id]);
-        }
-      });
-    }
   }
 
   document.addEventListener("DOMContentLoaded", renderCards);

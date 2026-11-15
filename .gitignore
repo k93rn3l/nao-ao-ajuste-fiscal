@@ -1,5 +1,6 @@
 # Arquivos de trabalho locais
 data/
+build/
 __pycache__/
 *.pyc
 .DS_Store

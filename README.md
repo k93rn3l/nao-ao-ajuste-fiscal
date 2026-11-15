@@ -6,10 +6,9 @@ facilita o envio de e-mails de cobrança a senadores e deputados.
 
 ## O que o site faz
 
-1. **Explica o ajuste fiscal**: resumo na página inicial e a seção "O que o
-   Senado aprovou até agora?", em que cada medida é explicada por uma **animação
-   interativa** (play, pausa e linha do tempo), com os números, a íntegra da
-   explicação e a fonte oficial em "Detalhes" abaixo de cada animação.
+1. **Explica o ajuste fiscal**: resumo na página inicial e uma página própria
+   (`explicacoes.html`) com sete **vídeos narrados**, legendas, ilustrações
+   e detalhes com fontes oficiais.
 2. **Reúne críticas do povo**: textos de indignação prontos para copiar ou
    usar como base de e-mail, todos editáveis.
 3. **Envia a cobrança**: a pessoa escolhe um parlamentar, os representantes do
@@ -22,28 +21,44 @@ Não há cadastro, rastreamento, analytics ou back-end: tudo roda no navegador.
 ## Estrutura
 
 ```
-├── index.html                  # página única do site
+├── index.html                  # resumo, críticas e contato
+├── explicacoes.html            # medidas explicadas por vídeos narrados
 ├── css/style.css               # estilos base
-├── css/cards.css               # estilos das medidas animadas
+├── css/cards.css               # cartões e players responsivos
 ├── js/app.js                   # lógica de contatos, críticas e e-mail
-├── js/animacoes.js             # motor de animação SVG + 7 cenas (uma por medida)
-├── js/cards.js                 # monta os blocos de medida (animação + detalhes)
+├── js/cards.js                 # monta os blocos de medida (vídeo + detalhes)
 ├── js/medidas.js               # regras verificadas do PLP 299/2026 (fontes e versão)
 ├── js/data.js                  # parlamentares (GERADO, não editar à mão)
-├── assets/svg/                 # personagens Open Peeps (CC0, Pablo Stanley)
+├── assets/videos/              # MP4 com voz, cartazes e legendas VTT
+├── assets/video-icons/         # SVGs usados nas cenas dos vídeos
+├── scripts/storyboard.json     # roteiro das 28 cenas, 4 por medida
+├── scripts/gerar_audio_chatterbox.py # voz padrão em português
+├── scripts/render_videos.py    # quadros, legendas e MP4
 ├── scripts/gerar_dados.py      # atualiza js/data.js com as APIs oficiais
 ├── data/                       # JSONs brutos baixados das APIs (referência)
 └── .github/workflows/deploy.yml# publicação automática no GitHub Pages
 ```
 
-### Sobre as animações
+### Vídeos e narração
 
-O motor (`js/animacoes.js`) segue o padrão de animação determinística: cada
-quadro é função pura do tempo, o que permite pausar, buscar qualquer instante na
-linha do tempo e manter tudo leve (SVG gerado por código, sem bibliotecas).
-As animações tocam sozinhas quando entram na tela e respeitam a preferência
-`prefers-reduced-motion` (começam pausadas). Os personagens são do pack
-[Open Peeps](https://www.openpeeps.com/) de Pablo Stanley (licença CC0).
+Cada medida tem quatro cenas ilustradas com números, barras, fluxos e ícones SVG.
+Os sete MP4s incluem a narração Chatterbox Multilingual em português com a voz
+padrão do modelo. Cada vídeo também tem cartaz JPG e legenda VTT; o texto completo
+e as fontes continuam disponíveis logo abaixo. Os vídeos só são carregados ao
+iniciar a reprodução. O site é estático e não envia o texto para síntese externa.
+
+Para gerar novamente, instale [Chatterbox TTS](https://github.com/resemble-ai/chatterbox),
+`numpy`, `soundfile`, `Pillow`, `CairoSVG` e `ffmpeg` em um ambiente Python
+compatível. O primeiro comando baixa os pesos do modelo. Os WAVs intermediários
+ficam em `build/video-audio/`, ignorado pelo Git; somente os MP4s são usados pelo site.
+
+```bash
+python3 scripts/gerar_audio_chatterbox.py
+python3 scripts/render_videos.py --timings build/video-audio/timings.json
+```
+
+Edite `scripts/storyboard.json` para mudar fala, títulos ou elementos visuais.
+Depois gere os áudios e vídeos novamente para manter a locução sincronizada.
 
 ## Manter as informações legislativas em dia
 
