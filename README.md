@@ -6,15 +6,14 @@ facilita o envio de e-mails de cobrança a senadores e deputados.
 
 ## O que o site faz
 
-1. **Explica o ajuste fiscal**: resumo na página inicial e uma página própria
-   (`explicacoes.html`) com sete **vídeos narrados**, legendas, ilustrações
-   e detalhes com fontes oficiais.
-2. **Reúne críticas do povo**: textos de indignação prontos para copiar ou
-   usar como base de e-mail, todos editáveis.
-3. **Envia a cobrança**: a pessoa escolhe um parlamentar, os representantes do
-   seu estado ou casas inteiras; com um clique abre o Gmail (ou o app de e-mail
-   padrão) com destinatários, assunto e mensagem prontos. Com muitos
-   destinatários, a lista vai em **Cco** (cópia oculta).
+1. **Reúne críticas do povo**: seis textos de indignação em um **carrossel de
+   slides**, prontos para copiar ou usar como base de e-mail, todos editáveis.
+2. **Envia a cobrança**: a pessoa escolhe parlamentares (um a um, por casa ou
+   filtrando por nome, partido e **uma ou mais UFs**); com um clique abre o
+   Gmail (ou o app de e-mail padrão) com destinatários, assunto e mensagem
+   prontos. A seleção é limitada a **50 destinatários por mensagem** — acima
+   disso o risco de o e-mail cair na caixa de spam aumenta. Até 5 destinatários
+   vão no campo “Para”; acima disso, em **Cco** (cópia oculta).
 
 Não há cadastro, rastreamento, analytics ou back-end: tudo roda no navegador.
 
@@ -22,54 +21,32 @@ Não há cadastro, rastreamento, analytics ou back-end: tudo roda no navegador.
 
 ```
 ├── index.html                  # resumo, críticas e contato
-├── explicacoes.html            # medidas explicadas por vídeos narrados
-├── css/style.css               # estilos base
-├── css/cards.css               # cartões e players responsivos
+├── css/style.css               # estilos base (carrossel, chips, painéis)
 ├── js/app.js                   # lógica de contatos, críticas e e-mail
-├── js/cards.js                 # monta os blocos de medida (vídeo + detalhes)
-├── js/medidas.js               # regras verificadas do PLP 299/2026 (fontes e versão)
 ├── js/data.js                  # parlamentares (GERADO, não editar à mão)
-├── assets/videos/              # MP4 com voz, cartazes e legendas VTT
-├── assets/video-icons/         # SVGs usados nas cenas dos vídeos
-├── scripts/storyboard.json     # roteiro das 28 cenas, 4 por medida
-├── scripts/gerar_audio_chatterbox.py # voz padrão em português
-├── scripts/render_videos.py    # quadros, legendas e MP4
 ├── scripts/gerar_dados.py      # atualiza js/data.js com as APIs oficiais
-├── data/                       # JSONs brutos baixados das APIs (referência)
 └── .github/workflows/deploy.yml# publicação automática no GitHub Pages
 ```
 
-### Vídeos e narração
+### Limite anti-spam
 
-Cada medida tem quatro cenas ilustradas com números, barras, fluxos e ícones SVG.
-Os sete MP4s incluem a narração Chatterbox Multilingual em português com a voz
-padrão do modelo. Cada vídeo também tem cartaz JPG e legenda VTT; o texto completo
-e as fontes continuam disponíveis logo abaixo. Os vídeos só são carregados ao
-iniciar a reprodução. O site é estático e não envia o texto para síntese externa.
-
-Para gerar novamente, instale [Chatterbox TTS](https://github.com/resemble-ai/chatterbox),
-`numpy`, `soundfile`, `Pillow`, `CairoSVG` e `ffmpeg` em um ambiente Python
-compatível. O primeiro comando baixa os pesos do modelo. Os WAVs intermediários
-ficam em `build/video-audio/`, ignorado pelo Git; somente os MP4s são usados pelo site.
-
-```bash
-python3 scripts/gerar_audio_chatterbox.py
-python3 scripts/render_videos.py --timings build/video-audio/timings.json
-```
-
-Edite `scripts/storyboard.json` para mudar fala, títulos ou elementos visuais.
-Depois gere os áudios e vídeos novamente para manter a locução sincronizada.
+O Gmail aceita cerca de 500 destinatários por mensagem, mas enviar de uma vez
+para centenas de endereços a partir de uma conta pessoal chama atenção dos
+filtros anti-spam. A prática recomendada é manter por volta de **50
+destinatários por mensagem** (em Cco) e espaçar os envios. O site aplica esse
+teto (`LIMITE_MAX` em `js/app.js`) na seleção e sugere enviar mais mensagens
+com seleções diferentes para cobrar mais parlamentares.
 
 ## Manter as informações legislativas em dia
 
-Os textos e fontes dos cartões ficam centralizados em `js/medidas.js`, com a versão
-do texto descrita (texto-base aprovado pelo Senado em 12/11/2026, substitutivo
-Eduardo Braga). Quando a tramitação avançar (destaques de 17/11, análise na Câmara):
+O quadro de status da tramitação fica no alto da página inicial (`index.html`),
+com a versão do texto descrita (texto-base aprovado pelo Senado em 12/11/2026,
+substitutivo Eduardo Braga). Quando a tramitação avançar (destaques de 17/11,
+análise na Câmara):
 
 1. Confira a [página oficial de tramitação](https://www25.senado.leg.br/web/atividade/materias/-/materia/176328)
    e as notas da Consultoria de Orçamentos;
-2. Atualize `js/medidas.js` (textos, números, `dataRevisao`) e o campo `desatualizado`;
-3. Atualize também a seção de resumo em `index.html` e, se necessário, os textos
+2. Atualize o quadro de status em `index.html` e, se necessário, os textos
    das críticas em `js/app.js`.
 
 ## Atualizar os contatos dos parlamentares

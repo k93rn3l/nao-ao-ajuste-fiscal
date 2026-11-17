@@ -77,17 +77,42 @@
         "pacote em nome da minha família e da minha comunidade, e cobro coragem de Vossa " +
         "Excelência para votar com o povo.\n\n" +
         "Atenciosamente,\n[seu nome], [cidade/UF]"
+    },
+    {
+      id: "supersalarios",
+      titulo: "O ajuste tem que começar por cima: supersalários",
+      assunto: "PLP 299/2026: corte os supersalários antes de cortar saúde e educação",
+      texto:
+        "Excelência,\n\n" +
+        "O texto aprovado do PLP 299/2026 apenas dá 120 dias para o Congresso apreciar projeto " +
+        "de lei sobre verbas indenizatórias: os chamados supersalários, pagamentos que somam " +
+        "mais que o teto constitucional e foram apontados como gasto irregular em auditorias. " +
+        "A medida não corta nada por si só; deixa o problema para depois.\n\n" +
+        "Não é justo cobrar sacrifício de quem depende do SUS e da escola pública enquanto os " +
+        "penduricalhos dos próprios Poderes seguem intocados. Exijo que Vossa Excelência " +
+        "regulamente já as verbas indenizatórias, sem esperar o prazo vencer, e vote contra " +
+        "qualquer medida que aperte saúde e educação antes de cortar os gastos irregulares " +
+        "de cima.\n\n" +
+        "Estarei acompanhando seu voto.\n\n" +
+        "Atenciosamente,\n[seu nome], [cidade/UF]"
     }
   ];
 
   var LIMITE_URL = 1800; // tamanho seguro de URL para Gmail/mailto
   var LIMITE_PARA = 5;   // até este nº de destinatários vão no campo "Para" (acima: Cco)
+  // Teto de destinatários por mensagem. O Gmail aceita ~500 endereços por e-mail, mas
+  // enviar de uma vez para centenas de pessoas, de conta pessoal, chama atenção dos
+  // filtros anti-spam: a prática recomendada é ~50 destinatários (em Cco) por mensagem,
+  // espaçando os envios. Acima do teto, o site bloqueia e sugere enviar em lotes.
+  var LIMITE_MAX = 50;
 
   /* ---------- estado ---------- */
   var todos = (window.DADOS.senado || []).concat(window.DADOS.camara || []);
   var selecionados = {};      // id -> true
   var criticaAtiva = CRITICAS[0];
   var filtroCasa = "todos";
+  var ufsAtivas = [];         // UFs escolhidas no filtro (pode ser mais de uma)
+  var slideAtual = 0;         // slide do carrossel de críticas
 
   var el = function (id) { return document.getElementById(id); };
 
@@ -104,7 +129,8 @@
   var CHAVE = "nao-ajuste-fiscal-selecao";
   try {
     var salvo = JSON.parse(localStorage.getItem(CHAVE) || "[]");
-    salvo.forEach(function (id) { selecionados[id] = true; });
+    // seleções salvas antes do limite podem vir maiores: mantém no máximo LIMITE_MAX
+    salvo.slice(0, LIMITE_MAX).forEach(function (id) { selecionados[id] = true; });
   } catch (e) { /* sem localStorage */ }
 
   var salvar = function () {
@@ -144,13 +170,25 @@
     document.body.removeChild(ta);
   }
 
-  /* ---------- críticas ---------- */
+  /* ---------- críticas (carrossel de slides) ---------- */
+  var trilho = null;
+  var slides = [];   // um <article class="critica"> por crítica
+  var dots = [];     // indicadores de slide
+  var botoesSel = {}; // id da crítica -> botão "Selecionar" do slide
+
   function renderCriticas() {
-    var container = el("lista-criticas");
-    container.replaceChildren();
+    var carrossel = el("carrossel-criticas");
+    carrossel.replaceChildren();
+    slides = [];
+    dots = [];
+    botoesSel = {};
+
+    trilho = document.createElement("div");
+    trilho.className = "carrossel-trilho";
+
     CRITICAS.forEach(function (c) {
       var artigo = document.createElement("article");
-      artigo.className = "critica" + (c === criticaAtiva ? " selecionada" : "");
+      artigo.className = "critica";
       artigo.dataset.id = c.id;
 
       var h3 = document.createElement("h3");
@@ -163,14 +201,15 @@
       rodape.className = "critica-rodape";
 
       var btnSel = document.createElement("button");
-      btnSel.className = "btn " + (c === criticaAtiva ? "btn-vermelho" : "btn-contorno");
-      btnSel.textContent = c === criticaAtiva ? "✓ Selecionada" : "Selecionar esta crítica";
+      btnSel.className = "btn btn-contorno";
+      btnSel.textContent = "Selecionar esta crítica";
       btnSel.addEventListener("click", function () {
         criticaAtiva = c;
         aplicarCritica(c);
-        renderCriticas();
+        atualizarBotoesCritica();
         toast('Crítica selecionada: "' + c.titulo + '". Revise a mensagem no passo 1.');
       });
+      botoesSel[c.id] = btnSel;
 
       var btnCop = document.createElement("button");
       btnCop.className = "btn btn-mini";
@@ -184,7 +223,100 @@
       artigo.appendChild(h3);
       artigo.appendChild(p);
       artigo.appendChild(rodape);
-      container.appendChild(artigo);
+      trilho.appendChild(artigo);
+      slides.push(artigo);
+    });
+
+    var janela = document.createElement("div");
+    janela.className = "carrossel-janela";
+    janela.appendChild(trilho);
+
+    var controles = document.createElement("div");
+    controles.className = "carrossel-controles";
+
+    var btnPrev = document.createElement("button");
+    btnPrev.type = "button";
+    btnPrev.className = "carrossel-seta";
+    btnPrev.setAttribute("aria-label", "Crítica anterior");
+    btnPrev.textContent = "←";
+    btnPrev.addEventListener("click", function () { irPara(slideAtual - 1); });
+
+    var caixaDots = document.createElement("div");
+    caixaDots.className = "carrossel-dots";
+    CRITICAS.forEach(function (c, i) {
+      var dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "carrossel-dot";
+      dot.setAttribute("aria-label", "Ver crítica " + (i + 1) + " de " + CRITICAS.length + ": " + c.titulo);
+      dot.addEventListener("click", function () { irPara(i); });
+      caixaDots.appendChild(dot);
+      dots.push(dot);
+    });
+
+    var btnNext = document.createElement("button");
+    btnNext.type = "button";
+    btnNext.className = "carrossel-seta";
+    btnNext.setAttribute("aria-label", "Próxima crítica");
+    btnNext.textContent = "→";
+    btnNext.addEventListener("click", function () { irPara(slideAtual + 1); });
+
+    var contador = document.createElement("p");
+    contador.className = "carrossel-contador";
+    contador.id = "carrossel-contador";
+
+    controles.appendChild(btnPrev);
+    controles.appendChild(caixaDots);
+    controles.appendChild(btnNext);
+    carrossel.appendChild(janela);
+    carrossel.appendChild(controles);
+    carrossel.appendChild(contador);
+
+    // setas do teclado quando uma delas está em foco
+    [btnPrev, btnNext].forEach(function (btn) {
+      btn.addEventListener("keydown", function (ev) {
+        if (ev.key === "ArrowLeft") { ev.preventDefault(); irPara(slideAtual - 1); }
+        if (ev.key === "ArrowRight") { ev.preventDefault(); irPara(slideAtual + 1); }
+      });
+    });
+
+    // arrastar para o lado no toque (celular)
+    var toqueX = null;
+    janela.addEventListener("touchstart", function (ev) {
+      toqueX = ev.touches[0].clientX;
+    }, { passive: true });
+    janela.addEventListener("touchend", function (ev) {
+      if (toqueX === null) return;
+      var delta = ev.changedTouches[0].clientX - toqueX;
+      if (Math.abs(delta) > 40) irPara(slideAtual + (delta < 0 ? 1 : -1));
+      toqueX = null;
+    }, { passive: true });
+
+    irPara(0);
+    atualizarBotoesCritica();
+  }
+
+  function irPara(indice) {
+    slideAtual = (indice + CRITICAS.length) % CRITICAS.length;
+    trilho.style.transform = "translateX(-" + (slideAtual * 100) + "%)";
+    slides.forEach(function (s, i) {
+      var visivel = i === slideAtual;
+      s.setAttribute("aria-hidden", visivel ? "false" : "true");
+      s.inert = !visivel; // sem foco/clique em slides escondidos
+    });
+    dots.forEach(function (d, i) {
+      d.classList.toggle("ativo", i === slideAtual);
+      d.setAttribute("aria-current", i === slideAtual ? "true" : "false");
+    });
+    el("carrossel-contador").textContent = (slideAtual + 1) + " / " + CRITICAS.length;
+  }
+
+  function atualizarBotoesCritica() {
+    CRITICAS.forEach(function (c, i) {
+      var ativa = c === criticaAtiva;
+      var btn = botoesSel[c.id];
+      btn.className = "btn " + (ativa ? "btn-vermelho" : "btn-contorno");
+      btn.textContent = ativa ? "✓ Selecionada" : "Selecionar esta crítica";
+      slides[i].classList.toggle("selecionada", ativa);
     });
   }
 
@@ -207,12 +339,39 @@
     });
   }
 
+  // chips das UFs adicionadas ao filtro (cada chip remove a própria UF)
+  function renderUfsAtivas() {
+    var box = el("ufs-ativas");
+    box.replaceChildren();
+    ufsAtivas.forEach(function (uf) {
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip-uf";
+      chip.setAttribute("aria-label", "Remover " + uf + " do filtro");
+      var rotulo = document.createElement("span");
+      rotulo.textContent = uf;
+      var fechar = document.createElement("span");
+      fechar.className = "chip-uf-x";
+      fechar.textContent = "✕";
+      fechar.setAttribute("aria-hidden", "true");
+      chip.appendChild(rotulo);
+      chip.appendChild(fechar);
+      chip.addEventListener("click", function () {
+        ufsAtivas = ufsAtivas.filter(function (u) { return u !== uf; });
+        renderUfsAtivas();
+        renderLista();
+        atualizarBotaoUf();
+      });
+      box.appendChild(chip);
+    });
+    box.hidden = ufsAtivas.length === 0;
+  }
+
   function filtrados() {
     var termo = normalizar(el("busca").value.trim());
-    var uf = el("uf").value;
     return todos.filter(function (p) {
       if (filtroCasa !== "todos" && p.casa !== filtroCasa) return false;
-      if (uf && p.uf !== uf) return false;
+      if (ufsAtivas.length && ufsAtivas.indexOf(p.uf) === -1) return false;
       if (termo) {
         var alvo = normalizar(p.nome + " " + p.partido + " " + p.uf);
         if (alvo.indexOf(termo) === -1) return false;
@@ -271,8 +430,17 @@
       frag.appendChild(li);
 
       var alternar = function () {
-        if (selecionados[p.id]) delete selecionados[p.id];
-        else selecionados[p.id] = true;
+        if (selecionados[p.id]) {
+          delete selecionados[p.id];
+        } else {
+          if (Object.keys(selecionados).length >= LIMITE_MAX) {
+            check.checked = false;
+            toast("Limite de " + LIMITE_MAX + " destinatários por mensagem: mais que isso " +
+              "aumenta o risco de cair no spam. Desmarque alguém ou envie outra mensagem.", true);
+            return;
+          }
+          selecionados[p.id] = true;
+        }
         salvar();
         check.checked = !!selecionados[p.id];
         label.classList.toggle("marcado", !!selecionados[p.id]);
@@ -283,45 +451,66 @@
     lista.appendChild(frag);
   }
 
+  // seleciona em lote respeitando o teto anti-spam; devolve o que aconteceu
   function selecionarVarios(lista) {
-    lista.forEach(function (p) { selecionados[p.id] = true; });
+    var vagas = LIMITE_MAX - Object.keys(selecionados).length;
+    var resultado = { adicionados: 0, cortou: false };
+    lista.forEach(function (p) {
+      if (selecionados[p.id]) return;
+      if (vagas <= 0) { resultado.cortou = true; return; }
+      selecionados[p.id] = true;
+      vagas--;
+      resultado.adicionados++;
+    });
     salvar();
     renderLista();
     atualizarContador();
+    return resultado;
   }
 
   function atualizarContador() {
     var n = Object.keys(selecionados).length;
-    el("contador").textContent = n === 1 ? "1 selecionado" : n + " selecionados";
-    el("aviso-limite").hidden = n <= 20;
+    var contador = el("contador");
+    contador.textContent = n + " de " + LIMITE_MAX + " selecionados";
+    contador.classList.toggle("no-limite", n >= LIMITE_MAX);
+    el("aviso-limite").hidden = n < LIMITE_MAX;
     atualizarChips();
     atualizarBotaoUf();
   }
 
-  function casaCompleta(casa) {
-    var daCasa = todos.filter(function (p) { return p.casa === casa; });
-    return daCasa.length > 0 && daCasa.every(function (p) { return !!selecionados[p.id]; });
+  // membros da casa que estão em tela (aplicando busca e UFs ativas)
+  function filtradosDaCasa(casa) {
+    var termo = normalizar(el("busca").value.trim());
+    return todos.filter(function (p) {
+      if (p.casa !== casa) return false;
+      if (ufsAtivas.length && ufsAtivas.indexOf(p.uf) === -1) return false;
+      if (termo) {
+        var alvo = normalizar(p.nome + " " + p.partido + " " + p.uf);
+        if (alvo.indexOf(termo) === -1) return false;
+      }
+      return true;
+    });
   }
 
   function atualizarChips() {
     document.querySelectorAll(".chip[data-casa]").forEach(function (chip) {
       var casa = chip.dataset.casa;
       if (casa === "todos") return;
-      chip.classList.toggle("cheio", casaCompleta(casa));
+      var visiveis = filtradosDaCasa(casa);
+      var cheio = visiveis.length > 0 && visiveis.every(function (p) { return !!selecionados[p.id]; });
+      chip.classList.toggle("cheio", cheio);
     });
   }
 
   function atualizarBotaoUf() {
-    var uf = el("uf").value;
     var btn = el("sel-uf");
-    if (!uf) {
-      btn.textContent = "Selecionar meu estado (após escolher UF)";
+    var visiveis = filtrados();
+    if (!visiveis.length) {
+      btn.textContent = "Selecionar lista filtrada";
       return;
     }
-    var doEstado = todos.filter(function (p) { return p.uf === uf; });
-    var completos = doEstado.length > 0 && doEstado.every(function (p) { return !!selecionados[p.id]; });
-    btn.textContent = (completos ? "Desmarcar" : "Selecionar") + " meu estado: " + uf +
-      " (" + doEstado.length + ")";
+    var completos = visiveis.every(function (p) { return !!selecionados[p.id]; });
+    btn.textContent = (completos ? "Desmarcar" : "Selecionar") + " lista filtrada (" + visiveis.length + ")";
   }
 
   /* ---------- e-mail ---------- */
@@ -388,7 +577,8 @@
   /* ---------- eventos ---------- */
   function ligarEventos() {
     // chips de casa: filtram a lista; Senado e Câmara também alternam a seleção
-    // da casa inteira (clicar seleciona todos, clicar de novo desmarca todos)
+    // dos parlamentares listados (clicar seleciona, clicar de novo desmarca),
+    // sempre respeitando o teto anti-spam de LIMITE_MAX destinatários
     document.querySelectorAll(".chip[data-casa]").forEach(function (chip) {
       chip.addEventListener("click", function () {
         var casa = chip.dataset.casa;
@@ -402,43 +592,55 @@
           return; // "Todos" é só filtro
         }
 
-        var daCasa = todos.filter(function (p) { return p.casa === casa; });
+        var visiveis = filtrados(); // já com o filtro da casa aplicado
         var nomeCasa = casa === "senado" ? "Senado" : "Câmara";
-        if (casaCompleta(casa)) {
-          daCasa.forEach(function (p) { delete selecionados[p.id]; });
-          toast(nomeCasa + " desmarcado: " + daCasa.length + " parlamentares removidos.");
+        if (visiveis.length && visiveis.every(function (p) { return !!selecionados[p.id]; })) {
+          visiveis.forEach(function (p) { delete selecionados[p.id]; });
+          salvar();
+          renderLista();
+          atualizarContador();
+          toast(nomeCasa + " desmarcado: " + visiveis.length + " parlamentares removidos.");
         } else {
-          daCasa.forEach(function (p) { selecionados[p.id] = true; });
-          toast(nomeCasa + " inteiro selecionado (" + daCasa.length + "). Clique de novo para desmarcar.");
+          var r = selecionarVarios(visiveis);
+          toast(nomeCasa + ": " + r.adicionados + " parlamentares selecionados" +
+            (r.cortou ? " (limite de " + LIMITE_MAX + " atingido)" : "") + ".");
         }
-        salvar();
-        renderLista();
-        atualizarContador();
       });
     });
 
-    el("busca").addEventListener("input", renderLista);
-    el("uf").addEventListener("change", function () {
+    el("busca").addEventListener("input", function () {
       renderLista();
-      atualizarBotaoUf();
+      atualizarContador();
+    });
+
+    // adicionar UF ao filtro (pode acumular quantas quiser; chip remove)
+    el("uf").addEventListener("change", function () {
+      var uf = el("uf").value;
+      if (uf && ufsAtivas.indexOf(uf) === -1) {
+        ufsAtivas.push(uf);
+        renderUfsAtivas();
+        renderLista();
+        atualizarBotaoUf();
+      }
+      el("uf").value = ""; // volta a "+ Adicionar UF"
     });
 
     el("sel-uf").addEventListener("click", function () {
-      var uf = el("uf").value;
-      if (!uf) {
-        toast("Escolha uma UF no filtro acima para selecionar seu estado.", true);
+      var visiveis = filtrados();
+      if (!visiveis.length) {
+        toast("Use a busca ou adicione UFs no filtro para montar sua lista.", true);
         return;
       }
-      var doEstado = todos.filter(function (p) { return p.uf === uf; });
-      if (doEstado.every(function (p) { return !!selecionados[p.id]; })) {
-        doEstado.forEach(function (p) { delete selecionados[p.id]; });
+      if (visiveis.every(function (p) { return !!selecionados[p.id]; })) {
+        visiveis.forEach(function (p) { delete selecionados[p.id]; });
         salvar();
         renderLista();
         atualizarContador();
-        toast("Parlamentares de " + uf + " desmarcados (" + doEstado.length + ").");
+        toast("Lista filtrada desmarcada (" + visiveis.length + ").");
       } else {
-        selecionarVarios(doEstado);
-        toast(doEstado.length + " parlamentares de " + uf + " selecionados.");
+        var r = selecionarVarios(visiveis);
+        toast(r.adicionados + " parlamentares selecionados" +
+          (r.cortou ? " (limite de " + LIMITE_MAX + " atingido)" : "") + ".");
       }
     });
     el("limpar").addEventListener("click", function () {
@@ -467,10 +669,11 @@
         ? new Date(window.DADOS.geradoEm + "T12:00:00").toLocaleDateString("pt-BR")
         : "data não disponível";
       ufSelectPreencher();
-    aplicarCritica(criticaAtiva);
-    renderCriticas();
-    renderLista();
-    atualizarContador();
-    ligarEventos();
-  });
+      renderUfsAtivas();
+      aplicarCritica(criticaAtiva);
+      renderCriticas();
+      renderLista();
+      atualizarContador();
+      ligarEventos();
+    });
 })();

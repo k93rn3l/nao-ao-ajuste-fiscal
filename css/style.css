@@ -195,31 +195,12 @@ img { max-width: 100%; }
 .secao-sub { color: var(--texto-meio); max-width: 760px; margin-bottom: 34px; }
 .secao-sub strong { color: var(--texto); }
 
-/* ---------- cards de conteúdo ---------- */
-.grade-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 18px;
-}
-
-.card-ponto {
-  background: var(--card);
-  border: 1px solid var(--borda);
-  border-radius: var(--raio);
-  padding: 22px;
-}
-.card-ponto h3 { margin: 0 0 10px; font-size: 1.15rem; }
-.card-ponto p { margin: 0; color: var(--texto-meio); font-size: 0.95rem; }
-.card-ponto strong { color: var(--texto); }
-
-.card-fontes ul { margin: 0; padding-left: 18px; color: var(--texto-meio); font-size: 0.9rem; }
-.card-fontes li { margin-bottom: 6px; }
-
-/* ---------- críticas ---------- */
-.grade-criticas {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 18px;
+/* ---------- críticas (carrossel) ---------- */
+.carrossel { max-width: 780px; margin-left: auto; margin-right: auto; }
+.carrossel-janela { overflow: hidden; border-radius: var(--raio); }
+.carrossel-trilho { display: flex; transition: transform 0.35s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .carrossel-trilho { transition: none; }
 }
 
 .critica {
@@ -232,19 +213,64 @@ img { max-width: 100%; }
   padding: 22px;
   transition: border-color 0.15s ease;
 }
+.carrossel-trilho .critica { flex: 0 0 100%; min-width: 0; }
 .critica.selecionada { border-color: var(--vermelho); box-shadow: 0 0 0 3px rgba(229, 72, 77, 0.25); }
-.critica h3 { margin: 0; font-size: 1.1rem; color: var(--amarelo); }
+.critica h3 { margin: 0; font-size: 1.15rem; color: var(--amarelo); }
 .critica p {
   margin: 0;
   flex: 1;
   white-space: pre-line;
   color: var(--texto-meio);
-  font-size: 0.92rem;
-  max-height: 210px;
+  font-size: 0.94rem;
+  max-height: 300px;
   overflow: auto;
 }
 .critica-rodape { display: flex; gap: 10px; flex-wrap: wrap; }
 .critica-rodape .btn { flex: 1; min-width: 140px; }
+
+.carrossel-controles {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+.carrossel-seta {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--texto);
+  border: 1px solid var(--borda);
+  font-family: inherit;
+  font-size: 1.15rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.carrossel-seta:hover { border-color: var(--vermelho); }
+.carrossel-seta:focus-visible { outline: 2px solid var(--amarelo); outline-offset: 2px; }
+.carrossel-dots { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.carrossel-dot {
+  width: 11px;
+  height: 11px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--borda);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.carrossel-dot.ativo { background: var(--vermelho); transform: scale(1.3); }
+.carrossel-dot:focus-visible { outline: 2px solid var(--amarelo); outline-offset: 2px; }
+.carrossel-contador {
+  margin: 10px 0 0;
+  text-align: center;
+  color: var(--texto-meio);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
 
 /* ---------- painéis ---------- */
 .painel {
@@ -277,6 +303,7 @@ img { max-width: 100%; }
   font-weight: 800;
   color: var(--amarelo);
 }
+.contador.no-limite { color: var(--vermelho); }
 
 .campo { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
 .campo > span { font-size: 0.85rem; font-weight: 600; color: var(--texto-meio); }
@@ -335,6 +362,28 @@ textarea { resize: vertical; }
 }
 
 .acoes-rapidas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+
+/* chips das UFs adicionadas ao filtro */
+.ufs-ativas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.chip-uf {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--borda);
+  color: var(--texto);
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.chip-uf:hover { border-color: var(--vermelho); }
+.chip-uf:focus-visible { outline: 2px solid var(--amarelo); outline-offset: 1px; }
+.chip-uf-x { color: var(--texto-meio); font-size: 0.72rem; }
+.chip-uf:hover .chip-uf-x { color: var(--vermelho); }
 
 /* ---------- lista de parlamentares ---------- */
 .lista-parlamentares {
